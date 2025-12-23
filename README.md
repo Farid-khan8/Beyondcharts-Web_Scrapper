@@ -132,12 +132,18 @@ http://localhost:5173
 🔁 Data Flow / Architecture Diagram
 
 flowchart TD
-A[BeyondChats Website] -->|Scraping| B[Laravel Backend<br/>Articles API + SQLite]
-B -->|Fetch latest article| C[Node.js Automation]
-C -->|Web Search + Scraping| D[External Reference Articles]
-D -->|Content Extraction| C
-C -->|AI Rewriting + Citation| B
-B -->|Fetch all articles| E[React Frontend]
+A[BeyondChats Website]
+B[Laravel Backend]
+C[Node.js Automation]
+D[External Articles]
+E[React Frontend]
+
+    A --> B
+    B --> C
+    C --> D
+    D --> C
+    C --> B
+    B --> E
 
 This diagram shows the entire end-to-end pipeline clearly.
 
