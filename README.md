@@ -131,12 +131,12 @@ http://localhost:5173
 
 🔁 Data Flow / Architecture Diagram
 
-flowchart TD
-A[BeyondChats Website]
-B[Laravel Backend]
-C[Node.js Automation]
-D[External Articles]
-E[React Frontend]
+    flowchart TD
+    A[BeyondChats Website]
+    B[Laravel Backend]
+    C[Node.js Automation]
+    D[External Articles]
+    E[React Frontend]
 
     A --> B
     B --> C
