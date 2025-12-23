@@ -1,44 +1,48 @@
-FROM php:8.2-fpm
+FROM php:8.2-apache
 
-# Install system dependencies & build tools
+# Enable Apache rewrite
+RUN a2enmod rewrite
+
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
-    curl \
     libpq-dev \
     libzip-dev \
-    libxml2-dev \
-    libonig-dev \
     zip \
+    curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions (order matters)
+# Install PHP extensions (most already enabled)
 RUN docker-php-ext-install \
     pdo \
     pdo_mysql \
     pdo_pgsql \
     pdo_sqlite \
-    mbstring \
-    zip \
-    xml
+    zip
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 # Set working directory
-WORKDIR /var/www
+WORKDIR /var/www/html
 
 # Copy project files
 COPY . .
 
-# Install Laravel dependencies
+# Install dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Set correct permissions
+# Set permissions
 RUN chown -R www-data:www-data storage bootstrap/cache
 
-# Expose Render port
+# Set Apache document root to Laravel public folder
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf \
+    && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# Expose port (Render uses 10000 internally)
 EXPOSE 10000
 
-# Start Laravel server
-CMD php artisan serve --host=0.0.0.0 --port=10000
+# Start Apache
+CMD ["apache2-foreground"]
