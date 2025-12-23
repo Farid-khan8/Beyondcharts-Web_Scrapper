@@ -1,0 +1,85 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f5f7fa;
+    margin: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto; /* centers container */
+    padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* centers children horizontally */
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: #222;
+}
+
+.loading {
+    text-align: center;
+    font-size: 18px;
+}
+
+.articles-grid {
+    width: 100%;
+    max-width: 1100px; /* keeps grid centered & compact */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    justify-content: center; /* centers cards when fewer columns */
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+}
+
+.card.updated {
+    border-left: 6px solid #4caf50;
+}
+
+.card h2 {
+    font-size: 20px;
+    margin-bottom: 8px;
+    color: #222;
+}
+
+.card .content {
+    color: #444;
+}
+
+.card ul {
+    padding-left: 18px;
+}
+
+.card a {
+    color: #1a73e8;
+    text-decoration: none;
+}
+
+.clamp {
+    display: -webkit-box;
+    -webkit-line-clamp: 6;
+    -webkit-box-orient: vertical;
+    line-clamp: 6;
+    overflow: hidden;
+}
+
+.refs li {
+    margin-bottom: 6px;
+}
+
+.badge {
+    background: #4caf50;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    height: fit-content;
+}
