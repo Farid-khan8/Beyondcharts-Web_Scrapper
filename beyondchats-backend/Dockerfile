@@ -1,17 +1,18 @@
 FROM php:8.2-fpm
 
-# Install system dependencies
+# Install system dependencies & build tools
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
+    curl \
     libpq-dev \
     libzip-dev \
-    zip \
-    curl \
+    libxml2-dev \
     libonig-dev \
-    libxml2-dev
+    zip \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions required by Laravel
+# Install PHP extensions (order matters)
 RUN docker-php-ext-install \
     pdo \
     pdo_mysql \
@@ -27,17 +28,17 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www
 
-# Copy application files
+# Copy project files
 COPY . .
 
-# Install PHP dependencies
+# Install Laravel dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# Fix permissions
+# Set correct permissions
 RUN chown -R www-data:www-data storage bootstrap/cache
 
 # Expose Render port
 EXPOSE 10000
 
-# Start Laravel
+# Start Laravel server
 CMD php artisan serve --host=0.0.0.0 --port=10000
