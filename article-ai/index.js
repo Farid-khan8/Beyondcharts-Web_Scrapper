@@ -10,7 +10,7 @@ const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
-//1- Fetch the latest article from the Laravel API
+//1- Fetching the latest article from the Laravel API
 async function fetchLatestArticle() {
     const res = await axios.get(`${API}/articles-latest`);
     return res.data;

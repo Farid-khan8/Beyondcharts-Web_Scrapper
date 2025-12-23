@@ -14,7 +14,7 @@ function ArticleCard({ article }) {
             {/* Article content */}
             <p className="content clamp">{cleanedContent}</p>
 
-            {/* References (only for updated articles) */}
+            {/* References */}
             {article.is_updated && article.references?.length > 0 && (
                 <>
                     <h4>References</h4>

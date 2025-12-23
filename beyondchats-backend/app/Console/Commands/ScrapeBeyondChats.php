@@ -21,13 +21,13 @@ class ScrapeBeyondChats extends Command
             'timeout' => 10,
         ]);
 
-        // Step 1: Fetch blog listing page
+        // Step 1: Fetching blog listing page
         $response = $client->get('https://beyondchats.com/blogs/');
         $html = $response->getBody()->getContents();
 
         $crawler = new Crawler($html);
 
-        // Step 2: Find blog cards (IMPORTANT: selector may change)
+        // Step 2: Finding blog cards (IMPORTANT: selector may change)
         $articles = $crawler->filter('article');
 
         if ($articles->count() === 0) {
@@ -35,7 +35,7 @@ class ScrapeBeyondChats extends Command
             return;
         }
 
-        // Step 3: Take last 5 (oldest)
+        // Step 3: Taking last 5 (oldest)
         $articles->slice(-5)->each(function (Crawler $node) {
 
             $title = trim($node->filter('h2')->text());
