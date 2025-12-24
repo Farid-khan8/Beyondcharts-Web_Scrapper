@@ -7,7 +7,6 @@ vendor
 *.md
 README.md
 .editorconfig
-.env.example
 tests
 .phpunit.result.cache
 storage/logs/*
@@ -20,3 +19,4 @@ storage/framework/views/*
 !storage/framework/views/.gitkeep
 .vscode
 .idea
+.DS_Store
