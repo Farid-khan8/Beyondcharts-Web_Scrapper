@@ -75,7 +75,6 @@ RUN chown -R www-data:www-data /var/www/html && \
 EXPOSE 10000
 
 # Start Apache , Run migrations & seed at container startup
-CMD php artisan key:generate --force \
-    && php artisan migrate --force \
+CMD php artisan migrate --force \
     && php artisan db:seed --force \
     && apache2-foreground
