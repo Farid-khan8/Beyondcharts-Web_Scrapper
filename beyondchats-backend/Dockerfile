@@ -65,14 +65,17 @@ RUN chown -R www-data:www-data /var/www/html && \
     chmod -R 775 storage bootstrap/cache database
 
 # Run Laravel setup commands (with error suppression)
-RUN php artisan key:generate --force || true
-RUN php artisan migrate --force || true
-RUN php artisan config:cache || true
-RUN php artisan route:cache || true
-RUN php artisan view:cache || true
+# RUN php artisan key:generate --force || true
+# RUN php artisan config:cache || true
+# RUN php artisan route:cache || true
+# RUN php artisan view:cache || true
+# RUN php artisan migrate --force && php artisan db:seed --force
 
 # Expose port 10000 (Render's default)
 EXPOSE 10000
 
-# Start Apache
-CMD ["apache2-foreground"]
+# Start Apache , Run migrations & seed at container startup
+CMD php artisan key:generate --force \
+    && php artisan migrate --force \
+    && php artisan db:seed --force \
+    && apache2-foreground
