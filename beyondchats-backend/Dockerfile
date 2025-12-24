@@ -40,7 +40,8 @@
 # CMD ["apache2-foreground"]
 
 
- FROM php:8.2-apache
+
+FROM php:8.2-apache
 
 # Enable Apache rewrite
 RUN a2enmod rewrite
@@ -53,23 +54,20 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libpng-dev \
     libonig-dev \
-    libxml2-dev \
     sqlite3 \
     libsqlite3-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions (CRITICAL - Laravel needs these)
+# Install PHP extensions
 RUN docker-php-ext-install \
     pdo \
     pdo_sqlite \
-    pdo_mysql \
     mbstring \
     zip \
     exif \
     pcntl \
     bcmath \
-    gd \
-    opcache
+    gd
 
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
@@ -85,26 +83,32 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy composer files first (for better caching)
-COPY composer.json composer.lock ./
-
-# Install dependencies (this will now work)
-RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
-
-# Copy the rest of the application
+# Copy the entire application
 COPY . .
 
-# Run composer scripts after copying all files
-RUN composer dump-autoload --optimize
-
-# Create SQLite database file if it doesn't exist
-RUN mkdir -p database && \
+# Create necessary directories and database file
+RUN mkdir -p storage/framework/{sessions,views,cache} \
+    storage/logs \
+    bootstrap/cache \
+    database && \
     touch database/database.sqlite && \
     chmod 664 database/database.sqlite
+
+# Install composer dependencies WITHOUT running scripts
+RUN composer install --no-dev --optimize-autoloader --no-interaction --no-scripts
+
+# Run composer dump-autoload to generate autoload files
+RUN composer dump-autoload --optimize
 
 # Set proper permissions
 RUN chown -R www-data:www-data /var/www/html && \
     chmod -R 775 storage bootstrap/cache database
+
+# Generate app key if not set
+RUN php artisan key:generate --force || true
+
+# Run migrations
+RUN php artisan migrate --force || true
 
 # Run Laravel optimizations
 RUN php artisan config:cache || true && \
